@@ -67,8 +67,8 @@ dependencies {
   testImplementation 'org.testcontainers:mysql'
   checkstyle "io.spring.javaformat:spring-javaformat-checkstyle:${springJavaformatCheckstyleVersion}"
   checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
-  implementation platform ('com.google.cloud:spring-cloud-gcp-dependencies:6.1.0')
-  implementation("com.google.cloud:spring-cloud-gcp-starter-sql-mysql")
+  // implementation platform ('com.google.cloud:spring-cloud-gcp-dependencies:6.1.0')
+  // implementation("com.google.cloud:spring-cloud-gcp-starter-sql-mysql")
 }
 
 tasks.named('test') {
