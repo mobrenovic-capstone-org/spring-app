@@ -1,10 +1,7 @@
-FROM gradle:8.13-jdk17-focal AS build
+FROM alpine:3.21.3 AS build
 
 RUN mkdir /project
-# COPY . /project
-# WORKDIR /project
-# RUN gradle clean build -x test
-COPY /build/libs/spring-petclinic-3.4.0.jar /project/java-application.jar
+COPY /build/libs/spring-petclinic-*.jar /project/java-application.jar
 COPY jmx_prometheus_javaagent-1.2.0.jar /project/jmx_prometheus_javaagent-1.2.0.jar
 COPY config.yaml /project/config.yaml
 
