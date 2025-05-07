@@ -1,0 +1,38 @@
+name: Deploy helm chart to kubernetes cluster
+on:
+  workflow_dispatch:
+
+jobs:
+  checkout:
+    runs-on: self-hosted
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4.2.2
+  
+  deploy:
+    runs-on: self-hosted
+    steps:
+        -
+          name: Fetch necessary variables
+          id: 'secrets'
+          uses: google-github-actions/get-secretmanager-secrets@v2.2.3
+          with:
+            secrets: |-
+              cluster-name:${{ secrets.SECRET_MANAGER_URL }}/cluster-name
+              location:${{ secrets.SECRET_MANAGER_URL }}/gcp-location
+              project-id:${{ secrets.SECRET_MANAGER_URL }}/project-id
+        -
+          name: Get credentials for the running cluster
+          id: 'get-creds'
+          uses: google-github-actions/get-gke-credentials@v2.3.3
+          with:
+            cluster_name: ${{ steps.secrets.outputs.cluster-name }}
+            location: ${{ steps.secrets.outputs.location }}
+            project_id: ${{ steps.secrets.outputs.project-id }}
+            namespace: "default"
+            use_dns_based_endpoint: true
+
+        -
+          id: 'get-pods'
+          run: 'kubectl get pods'
