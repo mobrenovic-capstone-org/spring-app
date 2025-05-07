@@ -45,9 +45,12 @@ jobs:
           run: 'kubectl get pods -A'
 
         -
-          id: 'helm-install'
-          uses: vimeda/helm@v1.7.0
+          id: 'configure-helm'
+          uses: Azure/setup-helm@v4.3.0
           with:
-            release: myapp
-            namespace: 'default'
-            chart: './charts/petclinic-app'
+            version: latest
+        
+        -
+          id: 'helm-install'
+          working-directory: charts/petclinic-app/
+          run: helm upgrade myapp . -f values.yaml --namespace default
