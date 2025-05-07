@@ -51,6 +51,11 @@ jobs:
             version: latest
         
         -
+          name: helm dependency
+          id: 'helm-dep'
+          working-directory: charts/petclinic-app/
+          run: helm dependency build
+        -
           id: 'helm-install'
           working-directory: charts/petclinic-app/
           run: helm upgrade myapp . -f values.yaml --namespace default
