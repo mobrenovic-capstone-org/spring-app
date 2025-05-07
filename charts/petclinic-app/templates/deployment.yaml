@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.deployment.label }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.pod.label }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.pod.label }}
+
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: {{ .Values.container.name }}
+          image: {{ .Values.container.image }}
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: CLOUD_SQL_DB_NAME
+            value: {{ .Values.container.env.cloudSqlDbName }}
+          - name: CLOUD_SQL_USER
+            value: {{ .Values.container.env.cloudSqlUser }}
+          - name: CLOUD_SQL_PW
+            value: {{ .Values.container.env.cloudSqlPw }}
+          - name: CLOUD_SQL_URL
+            value: {{ .Values.container.env.cloudSqlUrl }}
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
