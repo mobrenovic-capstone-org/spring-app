@@ -49,6 +49,6 @@ out/
 _site/
 *.css
 !petclinic.css
-**/values*
+**/values-*
 **/*.tgz
 **/*.lock
