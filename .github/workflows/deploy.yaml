@@ -27,7 +27,7 @@ jobs:
           
         -
           name: 'Write values for helm chart'
-          run: echo ${{ steps.secrets.outputs.helm-values }} >> values.yaml
+          run: echo '${{ steps.secrets.outputs.helm-values }}' >> values.yaml
           working-directory: charts/petclinic-app/
         -
           name: Get credentials for the running cluster
