@@ -23,6 +23,12 @@ jobs:
               cluster-name:${{ secrets.SECRET_MANAGER_URL }}/cluster-name
               location:${{ secrets.SECRET_MANAGER_URL }}/gcp-location
               project-id:${{ secrets.SECRET_MANAGER_URL }}/project-id
+              helm-values:${{ secrets.SECRET_MANAGER_URL }}/helm-values
+          
+        -
+          name: 'Write values for helm chart'
+          run: echo ${{ steps.secrets.outputs.helm-values }} >> values.yaml
+          working-directory: charts/petclinic-app/
         -
           name: Get credentials for the running cluster
           id: 'get-creds'
@@ -36,4 +42,12 @@ jobs:
 
         -
           id: 'get-pods'
-          run: 'kubectl get pods'
+          run: 'kubectl get pods -A'
+
+        -
+          id: 'helm-install'
+          uses: vimeda/helm@v1.7.0
+          with:
+            release: myapp
+            namespace: 'default'
+            chart: './charts/petclinic-app'
