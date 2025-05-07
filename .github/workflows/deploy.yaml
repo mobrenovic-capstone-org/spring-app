@@ -58,4 +58,4 @@ jobs:
         -
           id: 'helm-install'
           working-directory: charts/petclinic-app/
-          run: helm install myapp . -f values.yaml --namespace default
+          run: helm upgrade myapp . -f values.yaml --namespace default --install
