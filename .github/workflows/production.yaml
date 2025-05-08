@@ -18,10 +18,15 @@ jobs:
         id: 'vars'
         uses: google-github-actions/get-secretmanager-secrets@v2.2.3
         with:
+          export_to_environment: true
           secrets: |-
             gar-location:${{ secrets.SECRET_MANAGER_URL }}/gar-location
             project-id:${{ secrets.SECRET_MANAGER_URL }}/project-id
             gar-repo:${{ secrets.SECRET_MANAGER_URL }}/gar-repository
+            CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER_URL }}/sql-url
+            CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER_URL }}/sql-db
+            CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER_URL }}/sql-user
+            CLOUD_SQL_PW:${{ secrets.SECRET_MANAGER_URL }}/sql-pw
 
       -
         name: install java
