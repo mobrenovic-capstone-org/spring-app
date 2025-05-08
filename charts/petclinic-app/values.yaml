@@ -1,0 +1,37 @@
+namespace: "default"
+
+# metadata for the deployment
+deployment:
+  name: "my-deployment"
+  label: "my-app"
+
+# label metadata for pod
+pod:
+  label: "my-app"
+
+# container 
+container:
+  name: "my-container"
+  image: ""
+  # environment variables for database configuration.
+  env:
+    cloudSqlDbName: ""
+    cloudSqlUser: ""
+    cloudSqlPw: ""
+    cloudSqlUrl: ""
+
+service:
+  name: ""
+  port: 
+  targetPort: 
+  type: ""
+
+# jmx exporter configuration for prometheus
+service_jmx:
+  name: ""
+  port: 
+  targetPort: 
+  type: ""
+
+# For subcharts, visit https://artifacthub.io/packages/helm/prometheus-community/prometheus?modal=values && 
+# https://artifacthub.io/packages/helm/grafana/grafana?modal=values

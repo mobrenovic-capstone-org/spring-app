@@ -1,0 +1,76 @@
+name: Pipeline for closed pull request on prod branch
+on:
+  pull_request:
+    types: [closed]
+
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: self-hosted
+    steps:
+      - 
+        id: 'checkout'
+        uses: actions/checkout@v4.2.2
+
+      -
+        name: fetch variables from secret manager
+        id: 'vars'
+        uses: google-github-actions/get-secretmanager-secrets@v2.2.3
+        with:
+          export_to_environment: true
+          secrets: |-
+            gar-location:${{ secrets.SECRET_MANAGER_URL }}/gar-location
+            project-id:${{ secrets.SECRET_MANAGER_URL }}/project-id
+            gar-repo:${{ secrets.SECRET_MANAGER_URL }}/gar-repository
+            CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER_URL }}/sql-url
+            CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER_URL }}/sql-db
+            CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER_URL }}/sql-user
+            CLOUD_SQL_PW:${{ secrets.SECRET_MANAGER_URL }}/sql-pw
+
+      -
+        name: install java
+        uses: actions/setup-java@v4.7.1
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      -
+        name: Build .jar
+        run: ./gradlew build -x test
+
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      -
+        name: Authenticate to GAR
+        run: gcloud auth configure-docker ${{ steps.vars.outputs.gar-location}}-docker.pkg.dev
+
+      -
+        id: get-latest-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+        if: ${{ github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'}}
+      -
+        id: bump-semver
+        uses: actions-ecosystem/action-bump-semver@v1
+        with:
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: minor
+
+      -
+        id: 'push-tag'
+        uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ steps.bump-semver.outputs.new_version }}
+          message: '${{ steps.bump-semver.outputs.new_version }} tag pushed!'
+
+      -
+        name: Build and push docker image to GAR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |-
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/petclinic-cloud-prod:${{ steps.bump-semver.outputs.new_version }}
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/petclinic-cloud-prod:release
