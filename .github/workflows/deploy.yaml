@@ -5,10 +5,12 @@ on:
 jobs:
   checkout:
     runs-on: self-hosted
+    permissions:
+      contents: write
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v4.2.1
+        uses: actions/checkout@v4.2.2
   
   deploy:
     runs-on: self-hosted
