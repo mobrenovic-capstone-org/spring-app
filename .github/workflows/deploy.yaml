@@ -6,7 +6,7 @@ jobs:
   checkout:
     runs-on: self-hosted
     permissions:
-      contents: write
+      contents: read
     steps:
       -
         name: Checkout
