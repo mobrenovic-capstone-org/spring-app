@@ -16,7 +16,7 @@ jobs:
     steps:
         -
           name: Fetch necessary variables
-          id: 'secrets'
+          id: 'vars'
           uses: google-github-actions/get-secretmanager-secrets@v2.2.3
           with:
             secrets: |-
@@ -24,19 +24,21 @@ jobs:
               location:${{ secrets.SECRET_MANAGER_URL }}/gcp-location
               project-id:${{ secrets.SECRET_MANAGER_URL }}/project-id
               helm-values:${{ secrets.SECRET_MANAGER_URL }}/helm-values
+              gar-location:${{ secrets.SECRET_MANAGER_URL }}/gar-location
+              gar-repository:${{ secrets.SECRET_MANAGER_URL }}/gar-repository
           
         -
           name: 'Write values for helm chart'
-          run: echo '${{ steps.secrets.outputs.helm-values }}' >> values.yaml
+          run: echo '${{ steps.vars.outputs.helm-values }}' >> values.yaml
           working-directory: charts/petclinic-app/
         -
           name: Get credentials for the running cluster
           id: 'get-creds'
           uses: google-github-actions/get-gke-credentials@v2.3.3
           with:
-            cluster_name: ${{ steps.secrets.outputs.cluster-name }}
-            location: ${{ steps.secrets.outputs.location }}
-            project_id: ${{ steps.secrets.outputs.project-id }}
+            cluster_name: ${{ steps.vars.outputs.cluster-name }}
+            location: ${{ steps.vars.outputs.location }}
+            project_id: ${{ steps.vars.outputs.project-id }}
             namespace: "default"
             use_dns_based_endpoint: true
 
@@ -58,4 +60,4 @@ jobs:
         -
           id: 'helm-install'
           working-directory: charts/petclinic-app/
-          run: helm upgrade myapp . -f values.yaml --namespace default --install
+          run: helm upgrade myapp . -f values.yaml --namespace default --install --set container.image='${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repository }}/petclinic-cloud-prod:release'
