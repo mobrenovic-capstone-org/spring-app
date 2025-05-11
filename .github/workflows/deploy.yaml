@@ -23,7 +23,7 @@ jobs:
               cluster-name:${{ secrets.SECRET_MANAGER }}/cluster-name-${{ github.ref_name }}
               location:${{ secrets.SECRET_MANAGER }}/gcp-location
               project-id:${{ secrets.SECRET_MANAGER }}/project-id
-              helm-values:${{ secrets.SECRET_MANAGER }}/helm-values
+              helm-values:${{ secrets.SECRET_MANAGER }}/helm-values-${{ github.ref_name }}
               gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
               gar-repository:${{ secrets.SECRET_MANAGER }}/gar-repository
           
