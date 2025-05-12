@@ -21,7 +21,7 @@ jobs:
             gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
             project-id:${{ secrets.SECRET_MANAGER }}/project-id
             gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
-            CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER }}/sql-url
+            CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER }}/sql-url-private-vm
             CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER }}/sql-db
             CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER }}/sql-user
             CLOUD_SQL_PW:${{ secrets.SECRET_MANAGER }}/sql-pw
