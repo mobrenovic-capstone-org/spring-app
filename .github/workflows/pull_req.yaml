@@ -18,13 +18,13 @@ jobs:
         with:
           export_to_environment: true
           secrets: |-
-            gar-location:${{ secrets.SECRET_MANAGER_URL }}/gar-location
-            project-id:${{ secrets.SECRET_MANAGER_URL }}/project-id
-            gar-repo:${{ secrets.SECRET_MANAGER_URL }}/gar-repository
-            CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER_URL }}/sql-url
-            CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER_URL }}/sql-db
-            CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER_URL }}/sql-user
-            CLOUD_SQL_PW:${{ secrets.SECRET_MANAGER_URL }}/sql-pw
+            gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
+            project-id:${{ secrets.SECRET_MANAGER }}/project-id
+            gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
+            CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER }}/sql-url
+            CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER }}/sql-db
+            CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER }}/sql-user
+            CLOUD_SQL_PW:${{ secrets.SECRET_MANAGER }}/sql-pw
 
       -
         name: install java
@@ -45,6 +45,7 @@ jobs:
   
   build-push:
     runs-on: self-hosted
+    needs: ['checkout-and-test']
     steps:
       -
         uses: actions/checkout@v4.2.2
