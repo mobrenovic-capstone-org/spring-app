@@ -18,9 +18,6 @@ jobs:
         with:
           export_to_environment: true
           secrets: |-
-            gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
-            project-id:${{ secrets.SECRET_MANAGER }}/project-id
-            gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
             CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER }}/sql-url-private-vm
             CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER }}/sql-db
             CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER }}/sql-user
@@ -56,6 +53,17 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      -
+        name: fetch variables from secret manager
+        id: 'vars'
+        uses: google-github-actions/get-secretmanager-secrets@v2.2.3
+        with:
+          export_to_environment: true
+          secrets: |-
+            gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
+            project-id:${{ secrets.SECRET_MANAGER }}/project-id
+            gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
       
       -
         id: 'sha'
