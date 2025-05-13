@@ -1,0 +1,90 @@
+name: Pull request pipeline
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  checkout-and-test:
+    runs-on: self-hosted
+    steps:
+      -
+        id: 'checkout'
+        uses: actions/checkout@v4.2.2
+
+      -
+        name: fetch variables from secret manager
+        id: 'vars'
+        uses: google-github-actions/get-secretmanager-secrets@v2.2.3
+        with:
+          export_to_environment: true
+          secrets: |-
+            CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER }}/sql-url-private-vm
+            CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER }}/sql-db
+            CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER }}/sql-user
+            CLOUD_SQL_PW:${{ secrets.SECRET_MANAGER }}/sql-pw
+
+      -
+        name: install java
+        uses: actions/setup-java@v4.7.1
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      -
+        id: 'checkstyle'
+        name: static code analysis
+        run: ./gradlew checkstyleMain -x checkstyleNoHttp
+
+      -
+        id: 'tests'
+        run: ./gradlew test
+
+  
+  build-push:
+    runs-on: self-hosted
+    needs: ['checkout-and-test']
+    steps:
+      -
+        uses: actions/checkout@v4.2.2
+      
+      -
+        name: install java
+        uses: actions/setup-java@v4.7.1
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      -
+        name: fetch variables from secret manager
+        id: 'vars'
+        uses: google-github-actions/get-secretmanager-secrets@v2.2.3
+        with:
+          secrets: |-
+            gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
+            project-id:${{ secrets.SECRET_MANAGER }}/project-id
+            gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
+      
+      -
+        id: 'sha'
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      -
+        id: 'build'
+        name: gradle build
+        run: ./gradlew build -x test
+
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      -
+        name: Authenticate to GAR
+        run: gcloud auth configure-docker ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev
+
+      -
+        name: Build and push docker image to GAR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |-
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/petclinic-cloud-prod:${{ steps.sha.outputs.sha_short }}

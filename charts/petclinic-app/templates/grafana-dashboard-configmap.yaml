@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  labels:
+    grafana_dashboard: "1"
+data:
+  kubernetes.json: |
+{{ .Files.Get "grafana-dashboards/kubernetes.json" | indent 4 }}
+  jmx.json: |
+{{ .Files.Get "grafana-dashboards/jmx.json" | indent 4 }}
