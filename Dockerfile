@@ -5,7 +5,7 @@ COPY /build/libs/spring-petclinic-*.jar /project/java-application.jar
 COPY jmx_prometheus_javaagent-1.2.0.jar /project/jmx_prometheus_javaagent-1.2.0.jar
 COPY config.yaml /project/config.yaml
 
-FROM eclipse-temurin:17.0.14_7-jre-ubi9-minimal
+FROM eclipse-temurin:17-jre-alpine-3.21
 EXPOSE 8000
 EXPOSE 8080
 RUN mkdir /application
