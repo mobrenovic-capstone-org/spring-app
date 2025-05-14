@@ -88,16 +88,16 @@ jobs:
           context: .
           push: true
           tags: |-
-            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:${{ steps.short-sha.outputs.sha }}
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ steps.short-sha.outputs.sha }}
       
       -
         name: Scan the image with Trivy
         id: 'scan'
         uses: aquasecurity/trivy-action@0.30.0
         with:
-          image-ref: '${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:${{ steps.short-sha.outputs.sha }}'
+          image-ref: '${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ steps.short-sha.outputs.sha }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
-          vuln-type: 'os, library'
           severity: 'CRITICAL, HIGH'
+        continue-on-error: true

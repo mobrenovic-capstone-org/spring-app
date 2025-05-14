@@ -73,5 +73,5 @@ jobs:
           context: .
           push: true
           tags: |-
-            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:${{ steps.bump-semver.outputs.new_version }}
-            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:release
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.base_ref }}:${{ steps.bump-semver.outputs.new_version }}
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.base_ref }}:release
