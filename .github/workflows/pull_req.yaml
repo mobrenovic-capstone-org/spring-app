@@ -63,10 +63,11 @@ jobs:
             gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
             project-id:${{ secrets.SECRET_MANAGER }}/project-id
             gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
+            image-name:${{ secrets.SECRET_MANAGER }}/image-name
       
       -
-        id: 'sha'
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        id: 'short-sha'
+        uses: benjlevesque/short-sha@v3.0
       -
         id: 'build'
         name: gradle build
@@ -87,4 +88,16 @@ jobs:
           context: .
           push: true
           tags: |-
-            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/petclinic-cloud-prod:${{ steps.sha.outputs.sha_short }}
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:${{ steps.short-sha.outputs.sha }}
+      
+      -
+        name: Scan the image with Trivy
+        id: 'scan'
+        uses: aquasecurity/trivy-action@0.30.0
+        with:
+          image-ref: '${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:${{ steps.short-sha.outputs.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os, library'
+          severity: 'CRITICAL, HIGH'
