@@ -89,6 +89,7 @@ jobs:
           push: true
           tags: |-
             ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ steps.short-sha.outputs.sha }}
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:release
       
       -
         name: Scan the image with Trivy
@@ -99,5 +100,5 @@ jobs:
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
-          severity: 'CRITICAL, HIGH'
+          severity: "HIGH"
         continue-on-error: true
