@@ -26,6 +26,7 @@ jobs:
               helm-values:${{ secrets.SECRET_MANAGER }}/helm-values-${{ github.ref_name }}
               gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
               gar-repository:${{ secrets.SECRET_MANAGER }}/gar-repository
+              image-name:${{ secrets.SECRET_MANAGER }}/image-name
           
         -
           name: 'Write values for helm chart'
@@ -60,4 +61,11 @@ jobs:
         -
           id: 'helm-install'
           working-directory: charts/petclinic-app/
-          run: helm upgrade myapp . -f values.yaml --namespace default --install --set container.image="${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repository }}/petclinic-cloud-prod:release"
+          run: helm upgrade myapp . -f values.yaml --namespace default --install --set container.image="${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repository }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:release"
+        
+        -
+          id: 'petclinic-ip'
+          run: kubectl get svc --field-selector metadata.name==my-service-app
+        -
+          id: 'grafana-ip'
+          run: kubectl get svc --field-selector metadata.name==myapp-grafana

@@ -23,6 +23,7 @@ jobs:
             gar-location:${{ secrets.SECRET_MANAGER }}/gar-location
             project-id:${{ secrets.SECRET_MANAGER }}/project-id
             gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
+            image-name:${{ secrets.SECRET_MANAGER }}/image-name
             CLOUD_SQL_URL:${{ secrets.SECRET_MANAGER }}/sql-url
             CLOUD_SQL_DB_NAME:${{ secrets.SECRET_MANAGER }}/sql-db
             CLOUD_SQL_USER:${{ secrets.SECRET_MANAGER }}/sql-user
@@ -72,5 +73,5 @@ jobs:
           context: .
           push: true
           tags: |-
-            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/petclinic-cloud-prod:${{ steps.bump-semver.outputs.new_version }}
-            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/petclinic-cloud-prod:release
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.base_ref }}:${{ steps.bump-semver.outputs.new_version }}
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.base_ref }}:release
