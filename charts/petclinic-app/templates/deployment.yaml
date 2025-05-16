@@ -22,7 +22,7 @@ spec:
       containers:
         - name: {{ .Values.container.name }}
           image: {{ .Values.container.image }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
           - name: CLOUD_SQL_DB_NAME
             value: {{ .Values.container.env.cloudSqlDbName }}
