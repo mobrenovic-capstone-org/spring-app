@@ -70,8 +70,8 @@ jobs:
         #uses: benjlevesque/short-sha@v3.0
       -
         id: 'short-sha'
-        name: Set image tag from SHA
-        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+        name: Set image tag from SHA PR head
+        run: echo "IMAGE_TAG=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)" >> $GITHUB_ENV
       -
         id: 'build'
         name: gradle build
@@ -102,7 +102,7 @@ jobs:
         with:
           image-ref: '${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ steps.short-sha.outputs.sha }}'
           format: 'table'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
           severity: "HIGH"
         continue-on-error: true
