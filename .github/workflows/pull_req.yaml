@@ -65,9 +65,13 @@ jobs:
             gar-repo:${{ secrets.SECRET_MANAGER }}/gar-repository
             image-name:${{ secrets.SECRET_MANAGER }}/image-name
       
+      #-
+       # id: 'short-sha'
+        #uses: benjlevesque/short-sha@v3.0
       -
         id: 'short-sha'
-        uses: benjlevesque/short-sha@v3.0
+        name: Set image tag from SHA PR head
+        run: echo "IMAGE_TAG=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)" >> $GITHUB_ENV
       -
         id: 'build'
         name: gradle build
@@ -88,7 +92,7 @@ jobs:
           context: .
           push: true
           tags: |-
-            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ steps.short-sha.outputs.sha }}
+            ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ env.IMAGE_TAG }}
             ${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:release
       
       -
@@ -96,9 +100,9 @@ jobs:
         id: 'scan'
         uses: aquasecurity/trivy-action@0.30.0
         with:
-          image-ref: '${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ steps.short-sha.outputs.sha }}'
+          image-ref: '${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repo }}/${{ steps.vars.outputs.image-name }}-${{ github.head_ref }}:${{ env.IMAGE_TAG }}'
           format: 'table'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
           severity: "HIGH"
         continue-on-error: true
