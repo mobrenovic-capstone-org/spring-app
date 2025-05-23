@@ -61,7 +61,7 @@ jobs:
         -
           id: 'helm-install'
           working-directory: charts/petclinic-app/
-          run: helm upgrade myapp . -f values.yaml --namespace default --install --set container.image="${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repository }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:release"
+          run: helm upgrade myapp . -f values.yaml --namespace default --install --atomic --set container.image="${{ steps.vars.outputs.gar-location }}-docker.pkg.dev/${{ steps.vars.outputs.project-id }}/${{ steps.vars.outputs.gar-repository }}/${{ steps.vars.outputs.image-name }}-${{ github.ref_name }}:release"
         
         -
           id: 'petclinic-ip'
